@@ -28,45 +28,52 @@ window.onload = function () {
 }
 
 function mainLoop() {
-    // --- game logic ---------------------------------------
-    if (!gameOver) {
-        // move
-        hasChangedDirection = false;
-        playerX += movementX;
-        playerY += movementY;
+    processGameLogic();
+    render();
+}
 
-        // handle game area wraparound
-        if (playerX < 0) { playerX = tileCount - 1; }
-        if (playerX > tileCount - 1) { playerX = 0; }
-        if (playerY < 0) { playerY = tileCount - 1; }
-        if (playerY > tileCount - 1) { playerY = 0; }
+function processGameLogic() {
+    if (gameOver) {
+        return;
+    }
 
-        // handle self collision, i.e. game over
-        // (this could be done in rendering as an optimization)
-        for (let t of tail) {
-            if (t.x === playerX && t.y === playerY) {
-                gameOver = true;
-                break;
-            }
-        }
+    // move
+    hasChangedDirection = false;
+    playerX += movementX;
+    playerY += movementY;
 
-        // handle food collision
-        if (foodX === playerX && foodY === playerY) {
-            tailLength++;
-            score++;
+    // handle game area wraparound
+    if (playerX < 0) { playerX = tileCount - 1; }
+    if (playerX > tileCount - 1) { playerX = 0; }
+    if (playerY < 0) { playerY = tileCount - 1; }
+    if (playerY > tileCount - 1) { playerY = 0; }
 
-            foodX = Math.floor(Math.random() * tileCount);
-            foodY = Math.floor(Math.random() * tileCount);
-        }
-
-        // add current pos to tail, remove excess tail
-        tail.push({ x: playerX, y: playerY });
-        while (tail.length > tailLength) {
-            tail.shift();
+    // handle self collision, i.e. game over
+    // (this could be done in rendering to avoid 2 passes or we could use an index, lookup etc.)
+    for (let t of tail) {
+        if (t.x === playerX && t.y === playerY) {
+            gameOver = true;
+            break;
         }
     }
 
-    // --- rendering ---------------------------------------
+    // handle food collision
+    if (foodX === playerX && foodY === playerY) {
+        tailLength++;
+        score++;
+
+        foodX = Math.floor(Math.random() * tileCount);
+        foodY = Math.floor(Math.random() * tileCount);
+    }
+
+    // add current pos to head of tail, remove excess tail
+    tail.push({ x: playerX, y: playerY });
+    while (tail.length > tailLength) {
+        tail.shift();
+    }
+}
+
+function render() {
     // background
     context.fillStyle = "black";
     context.fillRect(0, 0, canvas.width, canvas.height);
@@ -84,8 +91,8 @@ function mainLoop() {
     context.fillRect(foodX * tileSize, foodY * tileSize, tileSize - 2, tileSize - 2);
 
     // scoring etc.
-    showGameOver(gameOver);
     showScore(score);
+    showGameOver(gameOver);
 }
 
 function showScore(score) {
@@ -135,7 +142,7 @@ function keyDown(e) {
 }
 
 function initialize() {
-    playerX = 10;
+    playerX = 5;
     playerY = 10;
     hasChangedDirection = false;
     score = 0;
