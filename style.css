@@ -5,25 +5,16 @@
     box-sizing: border-box;
     font-family: 'consolas';
     text-align: center;
-    /* 
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Lato", sans-serif;
-    font-style: normal;
-    font-size: 100%;
-    font-weight: normal; */
 }
 
-h1 {
-    letter-spacing: 1rem;
-}
-
-
-  
 body {
     height: 100%;
     background: black;
     padding-top: 5rem;
+}
+
+h1 {
+    letter-spacing: 1rem;
 }
 
 #game-canvas {
