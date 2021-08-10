@@ -4,6 +4,7 @@ let canvas;
 let context;
 let playerX = 10;
 let playerY = 10;
+let score = 0;
 let tileCount = 20;         // logical game area size
 let tileSize = 20;          // size of each tile, pixels
 let foodX = Math.floor(Math.random() * tileCount);
@@ -21,12 +22,7 @@ window.onload = function () {
 }
 
 function mainLoop() {
-    // todo: add score
     // todo: add game over
-    // todo: add title or smth
-    // todo: add instructions if needed, maybe not...
-    // todo: center game area
-    // todo: add border around game area
 
     // *** game logic ***
     // move
@@ -44,9 +40,8 @@ function mainLoop() {
     // handle food collision
     if (foodX === playerX && foodY === playerY) {
         tailLength++;
+        score++;
 
-        // Todo: randomize into a free location, if possible, otherwise ignore, 
-        //       i.e. ensure we do not enter an eternal loop here, or have a max retry count...then what?
         foodX = Math.floor(Math.random() * tileCount);
         foodY = Math.floor(Math.random() * tileCount);
     }
@@ -63,9 +58,11 @@ function mainLoop() {
     context.fillRect(0, 0, canvas.width, canvas.height);
 
     // player/snake
-    context.fillStyle = "lime";
-    for (let element of tail) {
-        context.fillRect(element.x * tileSize, element.y * tileSize, tileSize - 2, tileSize - 2);
+    for (let i = 0; i < tailLength; i++) {
+        context.fillStyle = i === tailLength - 1 ? "aqua" : "lime";
+
+        let t = tail[i];
+        context.fillRect(t.x * tileSize, t.y * tileSize, tileSize - 2, tileSize - 2);
 
         // Todo: check collision with self -> reset game
     }
@@ -73,6 +70,14 @@ function mainLoop() {
     // food
     context.fillStyle = "deeppink";
     context.fillRect(foodX * tileSize, foodY * tileSize, tileSize - 2, tileSize - 2);
+
+    // scoring
+    showScore(score);
+}
+
+function showScore(score) {
+    let socreboard = document.getElementById("score");
+    socreboard.innerHTML = "Score: " + score;
 }
 
 function keyDown(e) {
